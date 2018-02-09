@@ -2,6 +2,11 @@
 
 A simple and reliable cache for wxapp client.
 
+## Features
+
+- L1 cache is in memory, for best performance
+- L2 cache is wxStorage, all changes in the memory cache will also be written into the device storage
+
 ## Usage
 
 ```javascript
