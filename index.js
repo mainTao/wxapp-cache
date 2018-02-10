@@ -1,4 +1,5 @@
 const memoryCache = {}
+const prefix = 'wxapp-cache:'
 
 /**
  * Get value from cache
@@ -11,14 +12,14 @@ exports.get = function (key) {
     objString = memoryCache[key]
   }
   else {
-    objString = wx.getStorageSync(key)
+    objString = wx.getStorageSync(prefix + key)
     memoryCache[key] = objString
   }
   if (objString) {
     const obj = JSON.parse(objString)
     if (obj.deadline && Date.now() > obj.deadline) {
       delete memoryCache[key]
-      wx.removeStorage({key: key})
+      wx.removeStorage({key: prefix + key})
       return undefined
     }
     else {
@@ -47,7 +48,7 @@ exports.set = function (key, value, maxAge) {
   const objString = JSON.stringify(obj)
   memoryCache[key] = objString
   wx.setStorage({
-    key: key,
+    key: prefix + key,
     data: objString
   })
   return value
@@ -59,7 +60,7 @@ exports.set = function (key, value, maxAge) {
  */
 exports.remove = function (key) {
   delete memoryCache[key]
-  wx.removeStorageSync(key)
+  wx.removeStorageSync(prefix + key)
 }
 
 /**
@@ -73,7 +74,7 @@ exports.clear = function () {
 
     let pro = new Promise(function (resolve, reject) {
       wx.removeStorage({
-        key: key,
+        key: prefix + key,
         success: function () {
           delete memoryCache[key]
           resolve(key)
